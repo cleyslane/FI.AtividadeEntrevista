@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using FI.AtividadeEntrevista.DML;
+using FI.AtividadeEntrevista.Utils;
 
 namespace WebAtividadeEntrevista.Controllers
 {
@@ -37,27 +38,34 @@ namespace WebAtividadeEntrevista.Controllers
                 return Json(string.Join(Environment.NewLine, erros));
             }
 
-            if (!bo.VerificarExistencia(model.CPF))
+            if (bo.VerificarExistencia(model.CPF))
             {
-                model.Id = bo.Incluir(new Cliente()
-                {
-                    CEP = model.CEP,
-                    Cidade = model.Cidade,
-                    Email = model.Email,
-                    Estado = model.Estado,
-                    Logradouro = model.Logradouro,
-                    Nacionalidade = model.Nacionalidade,
-                    Nome = model.Nome,
-                    Sobrenome = model.Sobrenome,
-                    Telefone = model.Telefone,
-                    CPF = model.CPF
-                });
-
-                return Json("Cadastro efetuado com sucesso.");
+                Response.StatusCode = 400;
+                return Json(string.Join(Environment.NewLine, "CPF já possui cadastro."));
             }
 
-            Response.StatusCode = 400;
-            return Json(string.Join(Environment.NewLine, "CPF já possui cadastro."));
+            else if (UtilsHelpers.ValidarCPF(model.CPF))
+            {
+                Response.StatusCode = 400;
+                return Json(string.Join(Environment.NewLine, "Por favor informe um CPF válido.."));
+            }
+
+            model.Id = bo.Incluir(new Cliente()
+            {
+                CEP = model.CEP,
+                Cidade = model.Cidade,
+                Email = model.Email,
+                Estado = model.Estado,
+                Logradouro = model.Logradouro,
+                Nacionalidade = model.Nacionalidade,
+                Nome = model.Nome,
+                Sobrenome = model.Sobrenome,
+                Telefone = model.Telefone,
+                CPF = model.CPF
+            });
+
+            return Json("Cadastro efetuado com sucesso.");
+
         }
 
         [HttpPost]
@@ -74,25 +82,30 @@ namespace WebAtividadeEntrevista.Controllers
                 Response.StatusCode = 400;
                 return Json(string.Join(Environment.NewLine, erros));
             }
-            else
-            {
-                bo.Alterar(new Cliente()
-                {
-                    Id = model.Id,
-                    CEP = model.CEP,
-                    Cidade = model.Cidade,
-                    Email = model.Email,
-                    Estado = model.Estado,
-                    Logradouro = model.Logradouro,
-                    Nacionalidade = model.Nacionalidade,
-                    Nome = model.Nome,
-                    Sobrenome = model.Sobrenome,
-                    Telefone = model.Telefone,
-                    CPF = model.CPF,
-                });
 
-                return Json("Cadastro alterado com sucesso");
+            else if (UtilsHelpers.ValidarCPF(model.CPF))
+            {
+                Response.StatusCode = 400;
+                return Json(string.Join(Environment.NewLine, "Por favor informe um CPF válido.."));
             }
+
+            bo.Alterar(new Cliente()
+            {
+                Id = model.Id,
+                CEP = model.CEP,
+                Cidade = model.Cidade,
+                Email = model.Email,
+                Estado = model.Estado,
+                Logradouro = model.Logradouro,
+                Nacionalidade = model.Nacionalidade,
+                Nome = model.Nome,
+                Sobrenome = model.Sobrenome,
+                Telefone = model.Telefone,
+                CPF = model.CPF,
+            });
+
+            return Json("Cadastro alterado com sucesso");
+
         }
 
         [HttpGet]
