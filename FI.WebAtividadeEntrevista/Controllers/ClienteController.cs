@@ -83,7 +83,7 @@ namespace WebAtividadeEntrevista.Controllers
                 return Json(string.Join(Environment.NewLine, erros));
             }
 
-            else if (UtilsHelpers.ValidarCPF(model.CPF))
+            else if (!UtilsHelpers.ValidarCPF(model.CPF))
             {
                 Response.StatusCode = 400;
                 return Json(string.Join(Environment.NewLine, "Por favor informe um CPF válido.."));

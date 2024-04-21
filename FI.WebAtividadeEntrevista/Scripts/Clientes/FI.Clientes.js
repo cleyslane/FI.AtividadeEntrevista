@@ -18,21 +18,42 @@ $(document).ready(function () {
                 "CPF": $(this).find("#CPF").val()
             },
             error:
-            function (r) {
-                if (r.status == 400)
-                    ModalDialog("Ocorreu um erro", r.responseJSON);
-                else if (r.status == 500)
-                    ModalDialog("Ocorreu um erro", "Ocorreu um erro interno no servidor.");
-            },
+                function (r) {
+                    if (r.status == 400)
+                        ModalDialog("Ocorreu um erro", r.responseJSON);
+                    else if (r.status == 500)
+                        ModalDialog("Ocorreu um erro", "Ocorreu um erro interno no servidor.");
+                },
             success:
-            function (r) {
-                ModalDialog("Sucesso!", r)
-                $("#formCadastro")[0].reset();
+                function (r) {
+                    ModalDialog("Sucesso!", r)
+                    $("#formCadastro")[0].reset();
+                }
+        });
+    });
+    $('#btnIncluirBeneficiario').click(function () {
+        var cpf = $('#CPFBeneficiario').val();
+        var nome = $('#NomeBeneficiario').val();
+
+        $.ajax({
+            url: 'url_para_enviar_dados',
+            method: 'POST',
+            data: {
+                CPF: cpf,
+                Nome: nome
+            },
+            success: function (response) {
+                // Tratar resposta do servidor
+            },
+            error: function (xhr, status, error) {
+                // Tratar erros
             }
         });
-    })
-    
+    });
+
 })
+
+
 
 function mascaraCPF(i) {
 
